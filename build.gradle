@@ -1,0 +1,57 @@
+group 'edu.umc.sis.report.mainsub'
+version '1.0-SNAPSHOT'
+
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+war {
+    def newVersion = generateVersion()
+    archiveName = "ummcmainsub##$newVersion.$extension"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/webapp/WEB-INF/src'
+        }
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile("org.springframework.boot:spring-boot-starter-web")
+
+    compile files('/home/umweb/jars/edu.umc.sis.jcojson2-1.0-SNAPSHOT.jar')
+    compile files('/home/dayong/lib/UMUserInformationService-test-client.jar')
+    compile files('/home/dayong/IdeaProjects/edu.umc.sis.util.propertyfilereader/build/libs/edu.umc.sis.util.propertyfilereader-1.0-SNAPSHOT.jar')
+    providedCompile  files('/home/dayong/sso.jar')
+    providedCompile  files('/home/dayong/lib/sapjco.jar')
+    providedRuntime  files('/home/dayong/lib/sapjco.jar')
+
+}
+
+def generateVersion() {
+    def date = new java.util.Date()
+    def formattedDate = date.format('yyyyMMddHHmm')
+    return formattedDate
+}
