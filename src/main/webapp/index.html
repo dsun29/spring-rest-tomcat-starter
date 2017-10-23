@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Main Sub Report</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="./public/semantic.min.css">
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <script src="./public/semantic.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="ui dimmer" id="loader">
+    <div class="ui large text loader">Loading</div>
+</div>
+
+<div class="ui modal" id="messageBox">
+
+    <div class="image content">
+        <div class="description">
+            <div class="ui warning message">
+
+                <div class="header" id="errorMessageHeader">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui deny button">
+            OK
+        </div>
+    </div>
+</div>
+
+
+
+<div class="ui fixed icon menu">
+    <div class="ui container">
+        <a href="#" class="header item">
+            <h3 class="ui header"> Main Sub Report</h3>
+        </a>
+
+        <a class="item" id="menu-search">
+            <i class="search icon"></i>
+            Search
+        </a>
+        <a class="item">
+            <i class="setting icon"></i>
+            Fields
+        </a>
+    </div>
+
+</div>
+
+
+
+
+    <div class="ui modal" id="advancedsearch">
+        <div class="header">Search</div>
+        <div class="scrolling content">
+            <div class="ui form">
+
+                <div class="inline field">
+                    <label>Academic Year</label>
+                    <select class="ui search dropdown" id="academicYear">
+                    </select>
+                </div>
+
+                <div class="inline field">
+                    <label>Academic Session</label>
+                    <select class="ui search dropdown" id="academicSession">
+                        <option value="005">Summer</option>
+                        <option value="010">Fall Semester</option>
+                        <option value="020">Spring Semester</option>
+                    </select>
+                </div>
+
+                <div class="inline field">
+                    <label>Contract Object Type</label>
+                    <select class="ui search dropdown" id="contractOjectType">
+                    </select>
+                </div>
+
+                <div class="inline field">
+                    <label>Grant</label>
+                    <select class="ui search dropdown" id="grant">
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="ui approve button" id="start-search">Search</div>
+            <div class="ui cancel button">Cancel</div>
+        </div>
+    </div>
+
+
+
+<script>
+
+    let academicYearOptionss = [];
+    let sessionOptionss = {'005': 'Summer', '010': 'Fall Semester', '020': 'Spring Semester'};
+    let contractObjecTypeOptions = [];
+    let grantOptions = [];
+
+    const FIELDS = {
+        'MANDT': 'Client',
+        'PERSL': 'Period',
+        'GPART': 'Business Partner',
+        'HVORG': 'Main Transaction',
+        'TVORG': 'Sub Transaction',
+        'BUDAT': 'Posting Date',
+        'FAEDN': 'Due Date',
+        'GSBER': 'Business Area',
+        'AUGDT': 'Clearing Date',
+        'AUGBL': 'Clearing Document'
+
+    }
+
+    
+    const WS_SERVER_BASE_URL = './api';
+
+
+
+    $('#menu-search').click( function(e) {
+
+        e.preventDefault();
+
+        $('#advancedsearch').modal('show');
+
+        return false;
+    });
+
+    $('#start-search').click( function(){
+        $("#loader").addClass('active');
+
+        let query = {};
+        query.IV_YEAR = $('#academicYear').val();
+        query.IV_SESSION = $('#academicSession').val();
+        query.IV_CONTRACT_OBJ_TYPE = $('#contractOjectType').val();
+        query.IV_GRANT = $('#grant').val();
+        query.IV_REQUEST = 'SEARCH';
+
+        $.ajax({
+            type: 'POST',
+            url: WS_SERVER_BASE_URL + '/search',
+            dataType: 'json',
+            data: query
+        })
+        .done(function(data){
+
+        })
+        .fail(function(err){
+
+        })
+        .always(function(){
+            $("#loader").removeClass('active');
+        });
+
+
+    });
+
+
+    $( document ).ready(function() {
+
+
+        $('#messageBox').modal('hide');
+        $("#loader").addClass('active');
+
+        let currentYear = new Date().getFullYear();
+        for(let i=currentYear-5; i<=currentYear+5; i++){
+            let yearOption = {key: i, value: (i-1) +'-'+i };
+            academicYearOptionss.push(yearOption);
+        }
+
+        for (index in academicYearOptionss) {
+            $('#academicYear').append($('<option>').text(academicYearOptionss[index].value).attr('value', academicYearOptionss[index].key));
+
+        }
+
+
+        $.ajax({
+            type: "GET",
+            url: WS_SERVER_BASE_URL + '/init',
+            dataType: 'json',
+            async: true
+
+        })
+        .done(function (data) {
+
+            let returnMessage = JSON.parse(data.EV_MESSAGE);
+            if(returnMessage !== null && returnMessage.MESSAGE !== null){
+                $('#errorMessageHeader').text(returnMessage.MESSAGE);
+                $('#messageBox').modal('show');
+                return;
+            }
+
+            contractObjecTypeOptions = JSON.parse(data.EV_PSOBTYP);
+            grantOptions = JSON.parse(data.EV_GRANT);
+
+
+            for (index in contractObjecTypeOptions) {
+                $('#contractOjectType').append($('<option>').text(contractObjecTypeOptions[index].PSOBTYPT).attr('value', contractObjecTypeOptions[index].PSOBTYP));
+
+            }
+
+            for (index in grantOptions) {
+                $('#grant').append($('<option>').text(grantOptions[index].GRANT_NBR).attr('value', grantOptions[index].DESCRIPTION));
+            }
+
+
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            $('#errorMessageHeader').text(jqXHR.statusText);
+            $('#messageBox').modal('show');
+        })
+        .always(function(){
+            $("#loader").removeClass('active');
+        });
+
+
+    });
+</script>
+
+
+</body>
+</html>

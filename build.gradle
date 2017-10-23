@@ -39,10 +39,12 @@ sourceSets {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile 'org.glassfish.jersey.bundles:jaxrs-ri:2.22.2'
 
     compile files('/home/umweb/jars/edu.umc.sis.jcojson2-1.0-SNAPSHOT.jar')
     compile files('/home/dayong/lib/UMUserInformationService-test-client.jar')
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+    runtime group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
     compile files('/home/dayong/IdeaProjects/edu.umc.sis.util.propertyfilereader/build/libs/edu.umc.sis.util.propertyfilereader-1.0-SNAPSHOT.jar')
     providedCompile  files('/home/dayong/sso.jar')
     providedCompile  files('/home/dayong/lib/sapjco.jar')
