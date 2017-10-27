@@ -20,6 +20,7 @@
         return;
     }
 
+
     if (!(referer.startsWith("https://umepd1.olemiss.edu") ||
             referer.startsWith("https://umepp1.olemiss.edu") ||
             referer.startsWith("https://umepp2.olemiss.edu") ||

@@ -4,7 +4,9 @@ package edu.umc.sis.report.mainsub.controllers;
 import com.mysap.sso.SSO_Authenticate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -49,10 +51,10 @@ public class AuthenticationFilter
 
                 MultivaluedMap<String, String> headers = requestContext.getHeaders();
                 String useridFromHeader = ((String)((List)headers.get("user")).get(0)).toString();
-                if (!userid.equals(useridFromHeader)) {
-                    requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("{\"message\": \"Wrong user id or token\"}").build());
+                //if (!userid.equalsIgnoreCase(useridFromHeader)) {
+                 //   requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("{\"message\": \"Invalid user id or token\"}").build());
                     return;
-                }
+               // }
 
             }
         }

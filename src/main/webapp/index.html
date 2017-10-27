@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Main Sub Report</title>
+    <title>Contract Object Report</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" type="text/css" href="./public/semantic.min.css">
     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
@@ -13,8 +13,28 @@
             crossorigin="anonymous"></script>
     <script src="./public/semantic.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css">
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.3/js/dataTables.fixedColumns.min.js"></script>
+    \
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.colVis.min.js"></script>
+
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+
+    <style>
+        .dataTables_wrapper {
+            margin-top: 80px;
+        }
+
+        div.ColVis {
+            float: left;
+        }
+    </style>
 
 </head>
 
@@ -46,93 +66,154 @@
 
 
 
-<div class="ui fixed icon menu">
-    <div class="ui container">
+<div class="ui fixed icon menu" >
+
         <a href="#" class="header item">
-            <h3 class="ui header"> Main Sub Report</h3>
+            <h2 class="ui header"> Contract Object Report</h2>
         </a>
 
         <a class="item" id="menu-search">
             <i class="search icon"></i>
             Search
         </a>
-        <a class="item">
-            <i class="setting icon"></i>
-            Fields
-        </a>
-    </div>
 
 </div>
 
 
 
+<div class="ui modal" id="advancedsearch">
+    <div class="header">Search</div>
+    <div class="scrolling content">
+        <div class="ui form">
 
-    <div class="ui modal" id="advancedsearch">
-        <div class="header">Search</div>
-        <div class="scrolling content">
-            <div class="ui form">
-
-                <div class="inline field">
-                    <label>Academic Year</label>
-                    <select class="ui search dropdown" id="academicYear">
-                    </select>
-                </div>
-
-                <div class="inline field">
-                    <label>Academic Session</label>
-                    <select class="ui search dropdown" id="academicSession">
-                        <option value="005">Summer</option>
-                        <option value="010">Fall Semester</option>
-                        <option value="020">Spring Semester</option>
-                    </select>
-                </div>
-
-                <div class="inline field">
-                    <label>Contract Object Type</label>
-                    <select class="ui search dropdown" id="contractOjectType">
-                    </select>
-                </div>
-
-                <div class="inline field">
-                    <label>Grant</label>
-                    <select class="ui search dropdown" id="grant">
-                    </select>
-                </div>
-
+            <div class="inline field">
+                <label>Academic Year</label>
+                <select class="ui search dropdown" id="academicYear">
+                </select>
             </div>
-        </div>
 
-        <div class="actions">
-            <div class="ui approve button" id="start-search">Search</div>
-            <div class="ui cancel button">Cancel</div>
+            <div class="inline field">
+                <label>Academic Session</label>
+                <select class="ui search dropdown" id="academicSession">
+                    <option value="005">Summer</option>
+                    <option value="010">Fall Semester</option>
+                    <option value="020">Spring Semester</option>
+                </select>
+            </div>
+
+            <div class="inline field">
+                <label>Contract Object Type</label>
+                <select class="ui search dropdown" id="contractOjectType">
+                    <option value=""></option>
+                </select>
+            </div>
+
+            <div class="inline field">
+                <label>Grant</label>
+                <select class="ui search dropdown" id="grant">
+                    <option value=""></option>
+                </select>
+            </div>
+
         </div>
     </div>
 
+    <div class="actions">
+        <div class="ui approve button" id="start-search">Search</div>
+        <div class="ui cancel button">Cancel</div>
+    </div>
+</div>
 
+
+<div class="ui modal" id="fieldselect">
+
+    <div class="ui content huge divided relaxed horizontal list" id="fieldList">
+
+    </div>
+
+
+    <div class="actions">
+        <div class="ui cancel button">Close</div>
+    </div>
+</div>
+
+<div style="margin:5px;">
+
+    <table id="dataTable" class="display nowrap cell-border	" width="95%">
+        <thead>
+        </thead>
+
+    </table>
+</div>
 
 <script>
 
-    let academicYearOptionss = [];
-    let sessionOptionss = {'005': 'Summer', '010': 'Fall Semester', '020': 'Spring Semester'};
-    let contractObjecTypeOptions = [];
-    let grantOptions = [];
+    var academicYearOptions = [];
+    var sessionOptionss = {'005': 'Summer', '010': 'Fall Semester', '020': 'Spring Semester'};
+    var contractObjecTypeOptions = [];
+    var grantOptions = [];
+    var lineItems = [];
+    var table = null;
 
-    const FIELDS = {
-        'MANDT': 'Client',
-        'PERSL': 'Period',
-        'GPART': 'Business Partner',
-        'HVORG': 'Main Transaction',
-        'TVORG': 'Sub Transaction',
-        'BUDAT': 'Posting Date',
-        'FAEDN': 'Due Date',
-        'GSBER': 'Business Area',
-        'AUGDT': 'Clearing Date',
-        'AUGBL': 'Clearing Document'
+    var COLUMNS = [
+        {data: 'STUDENTNUMBER', name: 'STUDENTNUMBER', title: 'Business Partner', visible: true},
+        {data: 'STUDENTNAME', name: 'STUDENTNAME', title: 'Student Name', visible: true, "defaultContent": ""},
+        {data: 'PERSL', name: 'PERSL', title: 'Period', visible: true},
+        {data: 'CONTRACTOBJECTNAME', name: 'CONTRACTOBJECTNAME', title: 'Contract Object Type', visible: true, "defaultContent": ""},
+        {data: 'PSGRANT', name: 'PSGRANT', title: 'Grant', visible: true, "defaultContent": ""},
+        {data: 'GRANTNAME', name: 'GRANTNAME', title: 'Grant Name', visible: true, "defaultContent": ""},
 
-    }
+        {data: 'BUDAT', name: '', title: 'Posting Date', visible: true},
+        {data: 'FAEDN', name: '', title: 'Due Date', visible: true},
+        {data: 'GSBER', name: '', title: 'Business Area', visible: true},
+        {data: 'AUGDT', name: '', title: 'Clearing Date', visible: true,  "defaultContent": ""},
+        {data: 'AUGBL', name: '', title: 'Clearing Document', visible: true, "defaultContent": ""},
 
-    
-    const WS_SERVER_BASE_URL = './api';
+        {data: 'BLART', name: '', title: 'Document Type', visible: true, "defaultContent": ""},
+        {data: 'AUGRD', name: '', title: 'Clearing Reason', visible: true, "defaultContent": ""},
+        {data: 'AUGRS', name: '', title: 'Clearing Restriction', visible: true, "defaultContent": ""},
+        {data: 'AUGVD', name: '', title: 'Value Date', visible: true, "defaultContent": ""},
+        {data: 'INKPS', name: '', title: 'Collection Item', visible: true, "defaultContent": ""},
+
+        {data: 'FIPEX', name: '', title: 'Commitment Item', visible: true, "defaultContent": ""},
+        {data: 'VKONT', name: '', title: 'Contract Account Number', visible: true, "defaultContent": ""},
+        {data: 'VKTYP_PS', name: '', title: 'Contract Account Category', visible: true, "defaultContent": ""},
+
+
+        {data: 'BLDAT', name: '', title: 'Document Date', visible: true, "defaultContent": ""},
+        {data: 'OPBEL', name: '', title: 'Number of Contract Accts', visible: true, "defaultContent": ""},
+
+
+        {data: 'FONDS', name: '', title: 'Fund', visible: true, "defaultContent": ""},
+        {data: 'FTSTL', name: '', title: 'Funds Center', visible: true, "defaultContent": ""},
+        {data: 'HKONT', name: '', title: 'G/L Account', visible: true, "defaultContent": ""},
+
+
+        {data: 'PSGRP', name: '', title: 'Grouping Key', visible: true, "defaultContent": ""},
+        {data: 'PYMET', name: '', title: 'Payment Method', visible: true, "defaultContent": ""},
+
+
+        {data: 'XRAGL', name: '', title: 'Clearing Posting Reversed', visible: true, "defaultContent": ""},
+        {data: 'FIKEY', name: '', title: 'Reconcilliation Key', visible: true, "defaultContent": ""},
+
+
+
+        {data: 'ABGRD', name: '', title: 'Posting Reason', visible: true, "defaultContent": ""},
+
+        {data: 'OBJID', name: '', title: 'Student ObjID', visible: false, "defaultContent": ""},
+
+        {data: 'STFEECAT', name: '', title: 'Fee Category', visible: true, "defaultContent": ""},
+        {data: 'GRANT_TYPE', name: '', title: 'Grant Type', visible: true, "defaultContent": ""},
+
+        {data: 'BETRH', name: '', title: 'Amount', visible: true, "defaultContent": ""}
+
+
+
+    ];
+
+
+
+    var WS_SERVER_BASE_URL = './api';
 
 
 
@@ -145,95 +226,209 @@
         return false;
     });
 
-    $('#start-search').click( function(){
-        $("#loader").addClass('active');
+    $('#menu-fields').click( function(e) {
 
-        let query = {};
+        e.preventDefault();
+
+        $('#fieldselect').modal('show');
+
+        return false;
+    });
+
+    $('#start-search').click( function(){
+
+
+        $("#loader").addClass('active');
+        if(table){
+            table.destroy();
+        }
+        lineItems = [];
+
+        var query = {};
         query.IV_YEAR = $('#academicYear').val();
         query.IV_SESSION = $('#academicSession').val();
         query.IV_CONTRACT_OBJ_TYPE = $('#contractOjectType').val();
         query.IV_GRANT = $('#grant').val();
         query.IV_REQUEST = 'SEARCH';
+        query.IV_USER = 'dsun';
 
         $.ajax({
             type: 'POST',
             url: WS_SERVER_BASE_URL + '/search',
             dataType: 'json',
-            data: query
+            data: {parameters: JSON.stringify(query)},
+            headers: {user: 'dsun'}
         })
-        .done(function(data){
+            .done(function(data){
+                console.log(data);
+                lineItems = JSON.parse(data.EV_RESULTS.replace(/\\\"/g, ''));
 
-        })
-        .fail(function(err){
+                table = $('#dataTable').DataTable({
+                    dom:    "Bfrtip",
+                    data: lineItems,
+                    columns: COLUMNS,
+                    "paging": true,
+                    "pageLength": 20,
+                    "scrollX": true,
+                    buttons:  [
+                        {extend: 'colvis'},
+                        {
+                            extend: 'excelHtml5',
+                            customize: function (xlsx) {
+                                var sheet = xlsx.xl.worksheets['contractobjectreport.xml'];
 
-        })
-        .always(function(){
-            $("#loader").removeClass('active');
-        });
+                                $('row c[r^="C"]', sheet).attr('s', '2');
+                            }
+                        }
+                    ],
+
+                    fixedColumns:   {
+                        leftColumns: 1,
+                        rightColumns: 1
+                    }
+
+                } );
+
+
+                var numberResult = lineItems.length;
+                if(numberResult < 1){
+                    $('#errorMessageHeader').text('No record was found');
+                    $('#messageBox').modal('show');
+                    return;
+                }
+
+            })
+            .fail(function(err){
+
+                $('#errorMessageHeader').text(err.statusText);
+                $('#messageBox').modal('show');
+
+            })
+            .always(function(){
+                $("#loader").removeClass('active');
+            });
 
 
     });
 
 
+
+
     $( document ).ready(function() {
+
+        for(var i=0; i<COLUMNS.length; i++){
+            var singleColumn = COLUMNS[i];
+            if(singleColumn.visible === true) {
+                var checkBox = '<div class="item"> <input type="checkbox" class="fieldselectionch" name="CB_'
+                                + singleColumn.name + '" value="' + singleColumn.name + '" checked> <label>"' +
+                                + singleColumn.title + '</label> </div>';
+
+
+                $('#fieldList').append(checkBox);
+            }
+
+        }
+
+        $('.fieldselectionch').change(function(){
+            var column = table.column( this.name.replace('CB_','') +':name');
+            column.visible( ! column.visible() );
+        })
 
 
         $('#messageBox').modal('hide');
-        $("#loader").addClass('active');
+        //$("#loader").addClass('active');
 
-        let currentYear = new Date().getFullYear();
-        for(let i=currentYear-5; i<=currentYear+5; i++){
-            let yearOption = {key: i, value: (i-1) +'-'+i };
-            academicYearOptionss.push(yearOption);
+
+        var currentYear = new Date().getFullYear();
+        for(var i=currentYear-5; i<=currentYear+5; i++){
+            var yearOption = {key: i, value: (i-1) +'-'+i };
+            academicYearOptions.push(yearOption);
         }
 
-        for (index in academicYearOptionss) {
-            $('#academicYear').append($('<option>').text(academicYearOptionss[index].value).attr('value', academicYearOptionss[index].key));
+        for (index in academicYearOptions) {
+            $('#academicYear').append($('<option>').text(academicYearOptions[index].value).attr('value', academicYearOptions[index].key));
 
         }
+/*
+        var testingData = [{"MANDT":"120","PERSL":"1205","GPART":"3375025001","HVORG":"GIBI","TVORG":"0001","BUDAT":"2012-07-17","FAEDN":"2012-07-17","GSBER":"10","BLART":"YP","FIPEX":"11600","VKONT":"003375025001","VKTYP_PS":"SP","BLDAT":"2012-07-17","OPBEL":"005200000348","FONDS":"3375025001","FISTL":"19007","HKONT":"0000011484","PSGRANT":"AS03","PSGRP":"0002","BETRH":0.77,"FIKEY":"P3-120717-02","GRANT_TYPE":"GI"},{"MANDT":"120","PERSL":"1205","GPART":"0030000303","HVORG":"GIBI","TVORG":"0001","BUDAT":"2012-07-17","FAEDN":"2012-07-17","GSBER":"10","BLART":"YP","FIPEX":"11600","VKONT":"000010000103","VKTYP_PS":"ST","PSOBTYP":"FAID","BLDAT":"2012-07-17","OPBEL":"005200000347","FONDS":"3375025001","FISTL":"19007","HKONT":"0000011480","PSGRANT":"AS03","PSGRP":"0001","BETRH":-0.77,"FIKEY":"P3-120717-02","GRANT_TYPE":"GI"}];
+        table = $('#dataTable').DataTable({
+            dom:    "Bfrtip",
+            data: testingData,
+            columns: COLUMNS,
+            "paging": true,
+            "pageLength": 100,
+            "scrollX": true,
+            buttons:  [
+                {extend: 'colvis'},
+                {
+                    extend: 'excelHtml5',
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                        $('row c[r^="C"]', sheet).attr('s', '2');
+                    }
+                }
+            ],
+
+            fixedColumns:   {
+                leftColumns: 1,
+                rightColumns: 1
+            }
+
+
+        } );
+
+        return;
+
+*/
+
 
 
         $.ajax({
             type: "GET",
             url: WS_SERVER_BASE_URL + '/init',
             dataType: 'json',
-            async: true
+            async: true,
+            headers: {user: 'dsun'}
 
         })
-        .done(function (data) {
+            .done(function (data) {
 
-            let returnMessage = JSON.parse(data.EV_MESSAGE);
-            if(returnMessage !== null && returnMessage.MESSAGE !== null){
-                $('#errorMessageHeader').text(returnMessage.MESSAGE);
+                var returnMessage = data.EV_MESSAGE;
+                if(returnMessage !== null && returnMessage.MESSAGE !== null && returnMessage.TYPE === 'E'){
+                    $('#errorMessageHeader').text(returnMessage.MESSAGE);
+                    $('#messageBox').modal('show');
+                    return;
+                }
+
+                contractObjecTypeOptions = JSON.parse(data.EV_PSOBTYP.replace(/""/g, '"'));
+
+                console.log(data.EV_GRANT);
+                grantOptions = JSON.parse(data.EV_GRANT.replace(/\\\"/g, ''));
+
+
+                for (index in contractObjecTypeOptions) {
+                    $('#contractOjectType').append($('<option>').text(contractObjecTypeOptions[index].PSOBTYPT).attr('value', contractObjecTypeOptions[index].PSOBTYP));
+
+                }
+
+                for (index in grantOptions) {
+                    $('#grant').append($('<option>').text(grantOptions[index].DESCRIPTION).attr('value', grantOptions[index].GRANT_NBR));
+                }
+
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                $('#errorMessageHeader').text(jqXHR.statusText);
                 $('#messageBox').modal('show');
-                return;
-            }
-
-            contractObjecTypeOptions = JSON.parse(data.EV_PSOBTYP);
-            grantOptions = JSON.parse(data.EV_GRANT);
-
-
-            for (index in contractObjecTypeOptions) {
-                $('#contractOjectType').append($('<option>').text(contractObjecTypeOptions[index].PSOBTYPT).attr('value', contractObjecTypeOptions[index].PSOBTYP));
-
-            }
-
-            for (index in grantOptions) {
-                $('#grant').append($('<option>').text(grantOptions[index].GRANT_NBR).attr('value', grantOptions[index].DESCRIPTION));
-            }
-
-
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            $('#errorMessageHeader').text(jqXHR.statusText);
-            $('#messageBox').modal('show');
-        })
-        .always(function(){
-            $("#loader").removeClass('active');
-        });
-
+            })
+            .always(function(){
+                $("#loader").removeClass('active');
+            });
 
     });
+
+
 </script>
 
 
