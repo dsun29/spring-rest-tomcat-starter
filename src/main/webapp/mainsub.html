@@ -2,29 +2,27 @@
 <html lang="en">
 
 <head>
-    <title>Contract Object Report</title>
+    <title>Main Sub Transactions Report</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" type="text/css" href="./public/semantic.min.css">
-    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
 
-    <script
-            src="https://code.jquery.com/jquery-3.1.1.min.js"
-            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-            crossorigin="anonymous"></script>
-    <script src="./public/semantic.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="public/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="public/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.3/js/dataTables.fixedColumns.min.js"></script>
-    \
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
-
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.colVis.min.js"></script>
-
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="./public/rowsGroup.js"></script>
+    <script src="./public/bootstrap-datepicker.min.js"></script>
 
 
     <style>
@@ -67,76 +65,100 @@
 
 
 
-<div class="ui fixed icon menu" >
-
-        <a href="#" class="header item">
-            <h2 class="ui header"> Contract Object Report</h2>
-        </a>
-
-        <a class="item" id="menu-search">
-            <i class="search icon"></i>
-            Search
-        </a>
-
-</div>
 
 
 
-<div class="ui modal" id="advancedsearch">
-    <div class="header">Search</div>
-    <div class="scrolling content">
-        <div class="ui form">
-
-            <div class="inline field">
-                <label>Academic Year</label>
-                <select class="ui search dropdown" id="academicYear">
-                </select>
-            </div>
-
-            <div class="inline field">
-                <label>Academic Session</label>
-                <select class="ui search dropdown" id="academicSession">
-                    <option value="005">Summer</option>
-                    <option value="010">Fall Semester</option>
-                    <option value="020">Spring Semester</option>
-                </select>
-            </div>
-
-            <div class="inline field">
-                <label>Contract Object Type</label>
-                <select class="ui search dropdown" id="contractOjectType">
-                    <option value=""></option>
-                </select>
-            </div>
-
-            <div class="inline field">
-                <label>Grant</label>
-                <select class="ui search dropdown" id="grant">
-                    <option value=""></option>
-                </select>
-            </div>
-
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Main Sub Report</a>
         </div>
-    </div>
+        <ul class="nav navbar-nav">
 
-    <div class="actions">
-        <div class="ui approve button" id="start-search">Search</div>
-        <div class="ui cancel button">Cancel</div>
+            <li><a href="#" id="menu-search">Search</a></li>
+
+        </ul>
+    </div>
+</nav>
+
+
+<div id="advancedsearch" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Search</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="mainTransaction">Main Transaction:</label>
+                        <div class="col-sm-10">
+                            <select class="ui search dropdown" id="mainTransaction">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="mainTransaction">Sub Transaction:</label>
+                        <div class="col-sm-10">
+                            <select class="ui search dropdown" id="subTransaction">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="mainTransaction">Posting Date - Start</label>
+                        <div class="col-sm-10">
+                            <input class="datepicker" data-date-format="mm/dd/yyyy" id="startDate">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="endDate">Posting Date - End</label>
+                        <div class="col-sm-10">
+                            <input class="datepicker" data-date-format="mm/dd/yyyy" id="endDate">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="feeCategory">Fee Category</label>
+                        <div class="col-sm-10">
+                            <select class="ui search dropdown" id="feeCategory">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="feeCategory">Contract Object Type</label>
+                        <div class="col-sm-10">
+                            <select class="ui search dropdown" id="contractOjectType">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> &nbsp;&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="start-search">Search</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
-
-<div class="ui modal" id="fieldselect">
-
-    <div class="ui content huge divided relaxed horizontal list" id="fieldList">
-
-    </div>
-
-
-    <div class="actions">
-        <div class="ui cancel button">Close</div>
-    </div>
-</div>
 
 <div style="margin:5px;">
 
@@ -149,10 +171,14 @@
 
 <script>
 
-    var academicYearOptions = [];
-    var sessionOptionss = {'005': 'Summer', '010': 'Fall Semester', '020': 'Spring Semester'};
     var contractObjecTypeOptions = [];
-    var grantOptions = [];
+    var mainTransactionOptions = [];
+    var subTransactionOptions = [];
+    var feeCategoryOptions = [];
+    var startDate= null;
+    var endDate = null;
+
+
     var lineItems = [];
     var table = null;
 
@@ -189,15 +215,11 @@
         {data: 'FTSTL', name: '', title: 'Funds Center', visible: true, "defaultContent": ""},
         {data: 'HKONT', name: '', title: 'G/L Account', visible: true, "defaultContent": ""},
 
-
         {data: 'PSGRP', name: '', title: 'Grouping Key', visible: true, "defaultContent": ""},
         {data: 'PYMET', name: '', title: 'Payment Method', visible: true, "defaultContent": ""},
 
-
         {data: 'XRAGL', name: '', title: 'Clearing Posting Reversed', visible: true, "defaultContent": ""},
         {data: 'FIKEY', name: '', title: 'Reconcilliation Key', visible: true, "defaultContent": ""},
-
-
 
         {data: 'ABGRD', name: '', title: 'Posting Reason', visible: true, "defaultContent": ""},
 
@@ -325,72 +347,8 @@
 
     $( document ).ready(function() {
 
-        for(var i=0; i<COLUMNS.length; i++){
-            var singleColumn = COLUMNS[i];
-            if(singleColumn.visible === true) {
-                var checkBox = '<div class="item"> <input type="checkbox" class="fieldselectionch" name="CB_'
-                                + singleColumn.name + '" value="' + singleColumn.name + '" checked> <label>"' +
-                                + singleColumn.title + '</label> </div>';
-
-
-                $('#fieldList').append(checkBox);
-            }
-
-        }
-
-        $('.fieldselectionch').change(function(){
-            var column = table.column( this.name.replace('CB_','') +':name');
-            column.visible( ! column.visible() );
-        })
-
 
         $('#messageBox').modal('hide');
-        //$("#loader").addClass('active');
-
-
-        var currentYear = new Date().getFullYear();
-        for(var i=currentYear-5; i<=currentYear+5; i++){
-            var yearOption = {key: i, value: (i-1) +'-'+i };
-            academicYearOptions.push(yearOption);
-        }
-
-        for (index in academicYearOptions) {
-            $('#academicYear').append($('<option>').text(academicYearOptions[index].value).attr('value', academicYearOptions[index].key));
-
-        }
-/*
-        var testingData = [{"MANDT":"120","PERSL":"1205","GPART":"3375025001","HVORG":"GIBI","TVORG":"0001","BUDAT":"2012-07-17","FAEDN":"2012-07-17","GSBER":"10","BLART":"YP","FIPEX":"11600","VKONT":"003375025001","VKTYP_PS":"SP","BLDAT":"2012-07-17","OPBEL":"005200000348","FONDS":"3375025001","FISTL":"19007","HKONT":"0000011484","PSGRANT":"AS03","PSGRP":"0002","BETRH":0.77,"FIKEY":"P3-120717-02","GRANT_TYPE":"GI"},{"MANDT":"120","PERSL":"1205","GPART":"0030000303","HVORG":"GIBI","TVORG":"0001","BUDAT":"2012-07-17","FAEDN":"2012-07-17","GSBER":"10","BLART":"YP","FIPEX":"11600","VKONT":"000010000103","VKTYP_PS":"ST","PSOBTYP":"FAID","BLDAT":"2012-07-17","OPBEL":"005200000347","FONDS":"3375025001","FISTL":"19007","HKONT":"0000011480","PSGRANT":"AS03","PSGRP":"0001","BETRH":-0.77,"FIKEY":"P3-120717-02","GRANT_TYPE":"GI"}];
-        table = $('#dataTable').DataTable({
-            dom:    "Bfrtip",
-            data: testingData,
-            columns: COLUMNS,
-            "paging": true,
-            "pageLength": 100,
-            "scrollX": true,
-            buttons:  [
-                {extend: 'colvis'},
-                {
-                    extend: 'excelHtml5',
-                    customize: function (xlsx) {
-                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                        $('row c[r^="C"]', sheet).attr('s', '2');
-                    }
-                }
-            ],
-
-            fixedColumns:   {
-                leftColumns: 1,
-                rightColumns: 1
-            }
-
-
-        } );
-
-        return;
-
-*/
-
 
 
         $.ajax({
@@ -411,19 +369,27 @@
                 }
 
                 contractObjecTypeOptions = JSON.parse(data.EV_PSOBTYP.replace(/""/g, '"'));
-
-                grantOptions = JSON.parse(data.EV_GRANT.replace(/\\\"/g, ''));
-
+                mainTransactionOptions = JSON.parse(data.EV_HVORG.replace(/\\\"/g, ''));
+                subTransactionOptions = JSON.parse(data.EV_TVORG.replace(/\\\"/g, ''));
+                feeCategoryOptions = JSON.parse(data.EV_FEECAT.replace(/\\\"/g, ''));
 
                 for (index in contractObjecTypeOptions) {
                     $('#contractOjectType').append($('<option>').text(contractObjecTypeOptions[index].PSOBTYPT).attr('value', contractObjecTypeOptions[index].PSOBTYP));
-
                 }
 
-                for (index in grantOptions) {
-                    $('#grant').append($('<option>').text(grantOptions[index].DESCRIPTION).attr('value', grantOptions[index].GRANT_NBR));
+                for (index in mainTransactionOptions) {
+                    $('#mainTransaction').append($('<option>').text(mainTransactionOptions[index].TXT30).attr('value', mainTransactionOptions[index].HVORG));
                 }
 
+                for (index in feeCategoryOptions) {
+                    $('#feeCategory').append($('<option>').text(feeCategoryOptions[index].TEXT).attr('value', feeCategoryOptions[index].STFEECAT));
+                }
+
+                /*
+                for (index in subTransactionOptions) {
+                    $('#mainTransaction').append($('<option>').text(subTransactionOptions[index].TXT30).attr('value', subTransactionOptions[index].TVORG));
+                }
+                */
                 $('#advancedsearch').modal('show');
 
 
@@ -435,6 +401,29 @@
             .always(function(){
                 $("#loader").removeClass('active');
             });
+
+
+            $('#mainTransaction').click(function(){
+
+                var mainTransaction = $('#mainTransaction').val();
+                if(mainTransaction === null || mainTransaction === ''){
+                    $('#subTransaction').find('option').remove();
+                    $('#subTransaction').val('');
+                }
+                else{
+                    for (index in subTransactionOptions) {
+                        if(subTransactionOptions[index].HVORG === mainTransaction) {
+                            $('#subTransaction').append($('<option>').text(subTransactionOptions[index].TXT30).attr('value', subTransactionOptions[index].TVORG));
+                        }
+                    }
+                }
+
+            });
+
+        $('.datepicker').datepicker({
+            format: 'mm/dd/yyyy'
+        });
+
 
     });
 
