@@ -12,6 +12,7 @@
     <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <link href="public/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="public/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
 
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -21,6 +22,7 @@
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.colVis.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
     <script src="./public/rowsGroup.js"></script>
     <script src="./public/bootstrap-datepicker.min.js"></script>
 
@@ -39,37 +41,24 @@
 
 <body>
 
-<div class="ui dimmer" id="loader">
-    <div class="ui large text loader">Loading</div>
-</div>
 
-<div class="ui modal" id="messageBox">
 
-    <div class="image content">
-        <div class="description">
-            <div class="ui warning message">
+<div id="loader" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+     data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-                <div class="header" id="errorMessageHeader">
-
-                </div>
-
+            <div class="modal-body text-center" >
+                <i class="fa fa-spinner fa-spin" style="font-size:60px"></i>
             </div>
-        </div>
-    </div>
-    <div class="actions">
-        <div class="ui deny button">
-            OK
+            <div class="modal-footer" style="text-align: center"></div>
         </div>
     </div>
 </div>
-
-
-
-
 
 
 <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Main Sub Report</a>
         </div>
@@ -83,7 +72,7 @@
 
 
 <div id="advancedsearch" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
@@ -95,8 +84,8 @@
 
                 <form class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="mainTransaction">Main Transaction:</label>
-                        <div class="col-sm-10">
+                        <label class="control-label col-sm-3" for="mainTransaction">Main Transaction:</label>
+                        <div class="col-sm-9">
                             <select class="ui search dropdown" id="mainTransaction">
                                 <option value=""></option>
                             </select>
@@ -104,8 +93,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="mainTransaction">Sub Transaction:</label>
-                        <div class="col-sm-10">
+                        <label class="control-label col-sm-3" for="mainTransaction">Sub Transaction:</label>
+                        <div class="col-sm-9">
                             <select class="ui search dropdown" id="subTransaction">
                                 <option value=""></option>
                             </select>
@@ -113,24 +102,21 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="mainTransaction">Posting Date - Start</label>
-                        <div class="col-sm-10">
-                            <input class="datepicker" data-date-format="mm/dd/yyyy" id="startDate">
+                        <label class="control-label col-sm-3" for="mainTransaction">Posting Date Range</label>
+                        <div class="col-sm-9">
+                            <div class="input-daterange" id="dateRange">
+                                <input type="text" class="input-small" name="startDate" id="startDate" />
+                                <span class="add-on">to</span>
+                                <input type="text" class="input-small" name="endDate" id="endDate" />
+                            </div>
 
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for="endDate">Posting Date - End</label>
-                        <div class="col-sm-10">
-                            <input class="datepicker" data-date-format="mm/dd/yyyy" id="endDate">
-
-                        </div>
-                    </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="feeCategory">Fee Category</label>
-                        <div class="col-sm-10">
+                        <label class="control-label col-sm-3" for="feeCategory">Fee Category</label>
+                        <div class="col-sm-9">
                             <select class="ui search dropdown" id="feeCategory">
                                 <option value=""></option>
                             </select>
@@ -138,8 +124,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-2" for="feeCategory">Contract Object Type</label>
-                        <div class="col-sm-10">
+                        <label class="control-label col-sm-3" for="feeCategory">Contract Object Type</label>
+                        <div class="col-sm-9">
                             <select class="ui search dropdown" id="contractOjectType">
                                 <option value=""></option>
                             </select>
@@ -182,16 +168,27 @@
     var lineItems = [];
     var table = null;
 
-    var COLUMNS = [
+    var MAIN_SUB_COLUMNS = [
         {data: 'STUDENTNUMBER', name: 'STUDENTNUMBER', title: 'Business Partner', visible: true},
         {data: 'STUDENTNAME', name: 'STUDENTNAME', title: 'Student Name', visible: true, "defaultContent": ""},
         {data: 'PERSL', name: 'PERSL', title: 'Period', visible: true},
+
+        {data: 'HVORGT', name: 'HVORGT', title: 'Main Transaction', visible: true, "defaultContent": ""},
+
+
+        {data: 'TVORGT', name: 'TVORGT', title: 'Sub Transaction', visible: true, "defaultContent": ""},
+
+        {data: 'STFEECAT', name: 'STFEECAT', title: 'Fee Category', visible: true, "defaultContent": ""},
+        {data: 'BUDAT', name: '', title: 'Posting Date', visible: true},
+
+        {data: 'FAEDN', name: '', title: 'Due Date', visible: true},
+
+
         {data: 'CONTRACTOBJECTNAME', name: 'CONTRACTOBJECTNAME', title: 'Contract Object Type', visible: true, "defaultContent": ""},
         {data: 'PSGRANT', name: 'PSGRANT', title: 'Grant', visible: true, "defaultContent": ""},
         {data: 'GRANTNAME', name: 'GRANTNAME', title: 'Grant Name', visible: true, "defaultContent": ""},
 
-        {data: 'BUDAT', name: '', title: 'Posting Date', visible: true},
-        {data: 'FAEDN', name: '', title: 'Due Date', visible: true},
+
         {data: 'GSBER', name: '', title: 'Business Area', visible: true},
         {data: 'AUGDT', name: '', title: 'Clearing Date', visible: true,  "defaultContent": ""},
         {data: 'AUGBL', name: '', title: 'Clearing Document', visible: true, "defaultContent": ""},
@@ -225,11 +222,9 @@
 
         {data: 'OBJID', name: '', title: 'Student ObjID', visible: false, "defaultContent": ""},
 
-        {data: 'STFEECAT', name: '', title: 'Fee Category', visible: true, "defaultContent": ""},
         {data: 'GRANT_TYPE', name: '', title: 'Grant Type', visible: true, "defaultContent": ""},
 
         {data: 'BETRH', name: '', title: 'Amount', visible: true, "defaultContent": ""}
-
 
 
     ];
@@ -261,7 +256,31 @@
     $('#start-search').click( function(){
 
 
-        $("#loader").addClass('active');
+        startDate = $('#startDate').val();
+        endDate = $('#endDate').val();
+
+        if(startDate === null || startDate === '' || endDate === null) {
+            BootstrapDialog.show({
+                type: BootstrapDialog.TYPE_DANGER,
+                title: 'Parameter missing',
+                message: 'Posting Date Range is required',
+                buttons: [{
+                    label: 'OK',
+                    action: function(dialogItself){
+                        dialogItself.close();
+                    }
+                }]
+            });
+
+            return;
+        }
+        if(startDate !== '' && endDate === ''){
+            endDate = startDate; //single day
+        }
+
+
+        $("#loader").modal('show');
+
         if(table){
             table.destroy();
             $('#dataTable').empty();
@@ -269,12 +288,17 @@
         lineItems = [];
 
         var query = {};
-        query.IV_YEAR = $('#academicYear').val();
-        query.IV_SESSION = $('#academicSession').val();
+        query.IV_HVORG = $('#mainTransaction').val();
+        query.IV_TVORG = $('#subTransaction').val();
+        query.IV_FEE_CATEGORY = $('#feeCategory').val();
         query.IV_CONTRACT_OBJ_TYPE = $('#contractOjectType').val();
-        query.IV_GRANT = $('#grant').val();
+
+        query.IV_BEGDA = startDate.split('/')[2] + startDate.split('/')[0] + startDate.split('/')[1];
+        query.IV_ENDDA = endDate.split('/')[2] + endDate.split('/')[0] + endDate.split('/')[1];
         query.IV_REQUEST = 'SEARCH';
         query.IV_USER = 'dsun';
+
+        console.log(query);
 
         $.ajax({
             type: 'POST',
@@ -284,12 +308,30 @@
             headers: {user: 'dsun'}
         })
             .done(function(data){
+
+                if(data.EV_RESULTS === null || data.EV_RESULTS === undefined || data.EV_RESULTS === ''){
+
+                        BootstrapDialog.show({
+                            type: BootstrapDialog.TYPE_DANGER,
+                            title: 'No record was found',
+                            message: 'No record was found',
+                            buttons: [{
+                                label: 'OK',
+                                action: function(dialogItself){
+                                    dialogItself.close();
+                                }
+                            }]
+                        });
+
+                        return;
+                }
+
                 lineItems = JSON.parse(data.EV_RESULTS.replace(/\\\"/g, ''));
 
                 table = $('#dataTable').DataTable({
                     dom:    "Bfrtip",
                     data: lineItems,
-                    columns: COLUMNS,
+                    columns: MAIN_SUB_COLUMNS,
                     "paging": true,
                     "pageLength": 10,
                     "scrollX": true,
@@ -323,33 +365,47 @@
 
                 var numberResult = lineItems.length;
                 if(numberResult < 1){
-                    $('#errorMessageHeader').text('No record was found');
-                    $('#messageBox').modal('show');
+
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_DANGER,
+                        title: 'No record was found',
+                        message: 'No record was found',
+                        buttons: [{
+                            label: 'OK',
+                            action: function(dialogItself){
+                                dialogItself.close();
+                            }
+                        }]
+                    });
+
                     return;
                 }
 
             })
             .fail(function(err){
 
-                $('#errorMessageHeader').text(err.statusText);
-                $('#messageBox').modal('show');
+                BootstrapDialog.show({
+                    type: BootstrapDialog.TYPE_DANGER,
+                    title: 'Unexpected error ',
+                    message: err.statusText,
+                    buttons: [{
+                        label: 'OK',
+                        action: function(dialogItself){
+                            dialogItself.close();
+                        }
+                    }]
+                });
 
             })
             .always(function(){
-                $("#loader").removeClass('active');
+                $("#loader").modal('hide');
             });
-
-
     });
 
 
 
 
     $( document ).ready(function() {
-
-
-        $('#messageBox').modal('hide');
-
 
         $.ajax({
             type: "GET",
@@ -359,12 +415,23 @@
             headers: {user: 'dsun'}
 
         })
-            .done(function (data) {
+            .done(function(data) {
 
                 var returnMessage = data.EV_MESSAGE;
                 if(returnMessage !== null && returnMessage.MESSAGE !== null && returnMessage.TYPE === 'E'){
-                    $('#errorMessageHeader').text(returnMessage.MESSAGE);
-                    $('#messageBox').modal('show');
+
+                    BootstrapDialog.show({
+                        type: BootstrapDialog.TYPE_DANGER,
+                        title: 'Unexpected error ',
+                        message: returnMessage.MESSAGE,
+                        buttons: [{
+                            label: 'OK',
+                            action: function(dialogItself){
+                                dialogItself.close();
+                            }
+                        }]
+                    });
+
                     return;
                 }
 
@@ -395,11 +462,21 @@
 
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                $('#errorMessageHeader').text(jqXHR.statusText);
-                $('#messageBox').modal('show');
+                BootstrapDialog.show({
+                    type: BootstrapDialog.TYPE_DANGER,
+                    title: 'Unexpected error ',
+                    message: jqXHR.statusText,
+                    buttons: [{
+                        label: 'OK',
+                        action: function(dialogItself){
+                            dialogItself.close();
+                        }
+                    }]
+                });
+
             })
             .always(function(){
-                $("#loader").removeClass('active');
+                $("#loader").modal('hide');
             });
 
 
@@ -411,6 +488,7 @@
                     $('#subTransaction').val('');
                 }
                 else{
+                    $('#subTransaction').find('option').remove();
                     for (index in subTransactionOptions) {
                         if(subTransactionOptions[index].HVORG === mainTransaction) {
                             $('#subTransaction').append($('<option>').text(subTransactionOptions[index].TXT30).attr('value', subTransactionOptions[index].TVORG));
@@ -420,8 +498,9 @@
 
             });
 
-        $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy'
+        $('.input-daterange').datepicker({
+            format: 'mm/dd/yyyy',
+            autoclose: true
         });
 
 
