@@ -1,3 +1,18 @@
+<%@ page language="java"  %>
+<%@ page session ="true"%>
+<%@ page import="com.mysap.sso.SSO_Authenticate" %>
+
+<%
+SSO_Authenticate auth = new SSO_Authenticate();
+if (!auth.authenticate(request)) {
+out.write("Session expired. Please log on to <a href=\"http://myu.umc.edu\">MyU Portal</a> again.");
+return;
+}
+
+String user = (String) auth.getUserID();
+
+%>
+
 <!doctype html>
 <html lang="en">
 
@@ -35,6 +50,13 @@
         div.ColVis {
             float: left;
         }
+
+        lable.required :after {
+            content:"*";
+            color:red;
+        }
+
+
     </style>
 
 </head>
@@ -70,7 +92,7 @@
 <div class="ui fixed icon menu" >
 
         <a href="#" class="header item">
-            <h2 class="ui header"> Contract Object Report</h2>
+            <h4 class="ui header"> Contract Object Report</h4>
         </a>
 
         <a class="item" id="menu-search">
@@ -88,13 +110,13 @@
         <div class="ui form">
 
             <div class="inline field">
-                <label>Academic Year</label>
+                <label class="required">Academic Year</label>
                 <select class="ui search dropdown" id="academicYear">
                 </select>
             </div>
 
             <div class="inline field">
-                <label>Academic Session</label>
+                <label class="required">Academic Session</label>
                 <select class="ui search dropdown" id="academicSession">
                     <option value="005">Summer</option>
                     <option value="010">Fall Semester</option>
@@ -164,58 +186,55 @@
         {data: 'PSGRANT', name: 'PSGRANT', title: 'Grant', visible: true, "defaultContent": ""},
         {data: 'GRANTNAME', name: 'GRANTNAME', title: 'Grant Name', visible: true, "defaultContent": ""},
 
-        {data: 'BUDAT', name: '', title: 'Posting Date', visible: true},
-        {data: 'FAEDN', name: '', title: 'Due Date', visible: true},
-        {data: 'GSBER', name: '', title: 'Business Area', visible: true},
-        {data: 'AUGDT', name: '', title: 'Clearing Date', visible: true,  "defaultContent": ""},
-        {data: 'AUGBL', name: '', title: 'Clearing Document', visible: true, "defaultContent": ""},
+        {data: 'BUDAT', name: '', title: 'Posting Date', visible: false},
+        {data: 'FAEDN', name: '', title: 'Due Date', visible: false},
+        {data: 'GSBER', name: '', title: 'Business Area', visible: false},
+        {data: 'AUGDT', name: '', title: 'Clearing Date', visible: false,  "defaultContent": ""},
+        {data: 'AUGBL', name: '', title: 'Clearing Document', visible: false, "defaultContent": ""},
 
-        {data: 'BLART', name: '', title: 'Document Type', visible: true, "defaultContent": ""},
-        {data: 'AUGRD', name: '', title: 'Clearing Reason', visible: true, "defaultContent": ""},
-        {data: 'AUGRS', name: '', title: 'Clearing Restriction', visible: true, "defaultContent": ""},
-        {data: 'AUGVD', name: '', title: 'Value Date', visible: true, "defaultContent": ""},
-        {data: 'INKPS', name: '', title: 'Collection Item', visible: true, "defaultContent": ""},
+        {data: 'BLART', name: '', title: 'Document Type', visible: false, "defaultContent": ""},
+        {data: 'AUGRD', name: '', title: 'Clearing Reason', visible: false, "defaultContent": ""},
+        {data: 'AUGRS', name: '', title: 'Clearing Restriction', visible: false, "defaultContent": ""},
+        {data: 'AUGVD', name: '', title: 'Value Date', visible: false, "defaultContent": ""},
+        {data: 'INKPS', name: '', title: 'Collection Item', visible: false, "defaultContent": ""},
 
-        {data: 'FIPEX', name: '', title: 'Commitment Item', visible: true, "defaultContent": ""},
-        {data: 'VKONT', name: '', title: 'Contract Account Number', visible: true, "defaultContent": ""},
-        {data: 'VKTYP_PS', name: '', title: 'Contract Account Category', visible: true, "defaultContent": ""},
-
-
-        {data: 'BLDAT', name: '', title: 'Document Date', visible: true, "defaultContent": ""},
-        {data: 'OPBEL', name: '', title: 'Number of Contract Accts', visible: true, "defaultContent": ""},
+        {data: 'FIPEX', name: '', title: 'Commitment Item', visible: false, "defaultContent": ""},
+        {data: 'VKONT', name: '', title: 'Contract Account Number', visible: false, "defaultContent": ""},
+        {data: 'VKTYP_PS', name: '', title: 'Contract Account Category', visible: false, "defaultContent": ""},
 
 
-        {data: 'FONDS', name: '', title: 'Fund', visible: true, "defaultContent": ""},
-        {data: 'FTSTL', name: '', title: 'Funds Center', visible: true, "defaultContent": ""},
-        {data: 'HKONT', name: '', title: 'G/L Account', visible: true, "defaultContent": ""},
+        {data: 'BLDAT', name: '', title: 'Document Date', visible: false, "defaultContent": ""},
+        {data: 'OPBEL', name: '', title: 'Number of Contract Accts', visible: false, "defaultContent": ""},
 
 
-        {data: 'PSGRP', name: '', title: 'Grouping Key', visible: true, "defaultContent": ""},
-        {data: 'PYMET', name: '', title: 'Payment Method', visible: true, "defaultContent": ""},
+        {data: 'FONDS', name: '', title: 'Fund', visible: false, "defaultContent": ""},
+        {data: 'FTSTL', name: '', title: 'Funds Center', visible: false, "defaultContent": ""},
+        {data: 'HKONT', name: '', title: 'G/L Account', visible: false, "defaultContent": ""},
 
 
-        {data: 'XRAGL', name: '', title: 'Clearing Posting Reversed', visible: true, "defaultContent": ""},
-        {data: 'FIKEY', name: '', title: 'Reconcilliation Key', visible: true, "defaultContent": ""},
+        {data: 'PSGRP', name: '', title: 'Grouping Key', visible: false, "defaultContent": ""},
+        {data: 'PYMET', name: '', title: 'Payment Method', visible: false, "defaultContent": ""},
+
+
+        {data: 'XRAGL', name: '', title: 'Clearing Posting Reversed', visible: false, "defaultContent": ""},
+        {data: 'FIKEY', name: '', title: 'Reconcilliation Key', visible: false, "defaultContent": ""},
 
 
 
-        {data: 'ABGRD', name: '', title: 'Posting Reason', visible: true, "defaultContent": ""},
+        {data: 'ABGRD', name: '', title: 'Posting Reason', visible: false, "defaultContent": ""},
 
         {data: 'OBJID', name: '', title: 'Student ObjID', visible: false, "defaultContent": ""},
 
-        {data: 'STFEECAT', name: '', title: 'Fee Category', visible: true, "defaultContent": ""},
-        {data: 'GRANT_TYPE', name: '', title: 'Grant Type', visible: true, "defaultContent": ""},
+        {data: 'STFEECAT', name: '', title: 'Fee Category', visible: false, "defaultContent": ""},
+        {data: 'GRANT_TYPE', name: '', title: 'Grant Type', visible: false, "defaultContent": ""},
 
         {data: 'BETRH', name: '', title: 'Amount', visible: true, "defaultContent": ""}
-
 
 
     ];
 
 
-
     var WS_SERVER_BASE_URL = './api';
-
 
 
     $('#menu-search').click( function(e) {
@@ -252,14 +271,14 @@
         query.IV_CONTRACT_OBJ_TYPE = $('#contractOjectType').val();
         query.IV_GRANT = $('#grant').val();
         query.IV_REQUEST = 'SEARCH';
-        query.IV_USER = 'dsun';
+        query.IV_USER = '<%=user%>';
 
         $.ajax({
             type: 'POST',
             url: WS_SERVER_BASE_URL + '/search',
             dataType: 'json',
             data: {parameters: JSON.stringify(query)},
-            headers: {user: 'dsun'}
+            headers: {user: '<%=user%>'}
         })
             .done(function(data){
                 lineItems = JSON.parse(data.EV_RESULTS.replace(/\\\"/g, ''));
@@ -282,11 +301,6 @@
                             }
                         }
                     ],
-
-                    fixedColumns:   {
-                        leftColumns: 1,
-                        rightColumns: 1
-                    },
 
                     rowsGroup: [// Always the array (!) of the column-selectors in specified order to which rows groupping is applied
                         // (column-selector could be any of specified in https://datatables.net/reference/type/column-selector)
@@ -398,7 +412,7 @@
             url: WS_SERVER_BASE_URL + '/init',
             dataType: 'json',
             async: true,
-            headers: {user: 'dsun'}
+            headers: {user: '<%=user%>'}
 
         })
             .done(function (data) {

@@ -51,10 +51,10 @@ public class AuthenticationFilter
 
                 MultivaluedMap<String, String> headers = requestContext.getHeaders();
                 String useridFromHeader = ((String)((List)headers.get("user")).get(0)).toString();
-                //if (!userid.equalsIgnoreCase(useridFromHeader)) {
-                 //   requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("{\"message\": \"Invalid user id or token\"}").build());
+                if (!userid.equalsIgnoreCase(useridFromHeader)) {
+                    requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("{\"message\": \"Invalid user id or token\"}").build());
                     return;
-               // }
+                }
 
             }
         }
